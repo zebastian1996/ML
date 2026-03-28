@@ -3,9 +3,8 @@ from dash.exceptions import PreventUpdate
 import pandas as pd
 import numpy as np
 
-movie_data = pd.read_csv("movies.csv")
-rating_data = pd.read_csv("ratings.csv")
-links_data = pd.read_csv("links.csv")
+movie_data = pd.read_csv(r"C:\Users\stegi\Documents\github saker\Ml\labb_IMDB\movies.csv")
+rating_data = pd.read_csv(r"C:\Users\stegi\Documents\github saker\Ml\labb_IMDB\ratings.csv")
 
 app = Dash(__name__)
 
@@ -28,7 +27,7 @@ def update_options(search_value):
     if not search_value:
         raise PreventUpdate
     
-    search = movie_data[movie_data["title"].str.contains(search_value, case=False, na=False)].head(30)
+    search = movie_data[movie_data["title"].str.contains(search_value, case=False)].head(30)
     
     return [{"label": row["title"], "value": row["movieId"]} for _, row in search.iterrows()]
 
@@ -70,7 +69,6 @@ def rekomend(movie_ID):
 
     top15 = top15_score.merge(movie_data, on="movieId")
     top15_year = top15.merge(movie_data, on=["movieId", "title", "genres"])
-    top15_year = top15_year.merge(links_data[["movieId", "imdbId"]], how="left")
 
     top = top15_year.sort_values("score", ascending=False)
 
