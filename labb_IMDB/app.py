@@ -3,9 +3,9 @@ from dash.exceptions import PreventUpdate
 import pandas as pd
 import numpy as np
 
-movie_data = pd.read_csv("imdb\\movies.csv")
-rating_data = pd.read_csv("imdb\\ratings.csv")
-links_data = pd.read_csv("imdb\\links.csv")
+movie_data = pd.read_csv("movies.csv")
+rating_data = pd.read_csv("ratings.csv")
+links_data = pd.read_csv("links.csv")
 
 app = Dash(__name__)
 
