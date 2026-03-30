@@ -2,6 +2,8 @@ from dash import Dash, dcc, html, Input, Output, callback
 from dash.exceptions import PreventUpdate
 import pandas as pd
 import numpy as np
+import os #kommer snart fix med os
+
 
 movie_data = pd.read_csv(r"C:\Users\stegi\Documents\github saker\Ml\labb_IMDB\movies.csv")
 rating_data = pd.read_csv(r"C:\Users\stegi\Documents\github saker\Ml\labb_IMDB\ratings.csv")
@@ -42,10 +44,9 @@ def update_output(movie_id):
     return html.Ul([html.Li(title) for title in top5])
 
 def rekomend(movie_ID):
-    film_A = movie_ID
 
     liking_film_A = rating_data[
-        (rating_data["movieId"] == film_A) & 
+        (rating_data["movieId"] == movie_ID) & 
         (rating_data["rating"] >= 4.0)
     ].sort_values("userId")
 
@@ -53,7 +54,7 @@ def rekomend(movie_ID):
 
     rekommend = rating_data[
         (rating_data["userId"].isin(users)) & 
-        (rating_data["movieId"] != film_A) & 
+        (rating_data["movieId"] != movie_ID) & 
         (rating_data["rating"] >= 4)
     ].groupby("movieId").size()
 
@@ -62,17 +63,15 @@ def rekomend(movie_ID):
     rekommend = rekommend / len(users)
     rekommend = rekommend / np.sqrt(rating_count)
 
-    try_top15 = (rekommend.sort_values(ascending=False).head(25))
+    top30 = (rekommend.sort_values(ascending=False).head(25))
 
-    top15_score = try_top15.reset_index()
-    top15_score.columns = ["movieId", "score"]
+    top30 = top30.reset_index()
+    top30.columns = ["movieId", "score"]
 
-    top15 = top15_score.merge(movie_data, on="movieId")
-    top15_year = top15.merge(movie_data, on=["movieId", "title", "genres"])
+    top = top30.merge(movie_data, on="movieId")
 
-    top = top15_year.sort_values("score", ascending=False)
 
-    genrer = movie_data[movie_data["movieId"] == film_A]["genres"].iloc[0].split("|")
+    genrer = movie_data[movie_data["movieId"] == movie_ID]["genres"].iloc[0].split("|")
 
     for i, genres in enumerate(top["genres"]):
         genre_list = genres.split("|")
@@ -84,9 +83,7 @@ def rekomend(movie_ID):
             similarity = matches / len(genrer)
             top.loc[i, "score"] += similarity
 
-    resultat = top.sort_values("score", ascending=False).head(5)
-    return resultat["title"].tolist()
-
+    return top.sort_values("score", ascending=False).head(5)["title"].tolist()
 
 if __name__ == "__main__":
     app.run(debug=True)
