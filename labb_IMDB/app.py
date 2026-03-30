@@ -5,8 +5,8 @@ import numpy as np
 import os #kommer snart fix med os
 
 
-movie_data = pd.read_csv(r"C:\Users\stegi\Documents\github saker\Ml\labb_IMDB\movies.csv")
-rating_data = pd.read_csv(r"C:\Users\stegi\Documents\github saker\Ml\labb_IMDB\ratings.csv")
+movie_data = pd.read_csv(r'skriv in din väg till "movies.csv" här')
+rating_data = pd.read_csv('skriv in din väg till "ratings.csv" här')
 
 app = Dash(__name__)
 
